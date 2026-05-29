@@ -28,35 +28,6 @@ The project contains four highly specialized modules:
 
 ---
 
-### 🔬 Core Mathematics: The SW-EM-KDE Inversion
-
-At the heart of the CPR framework (`cpr.py`) is the statistical inversion of the Square Wave (SW) LDP perturbation. 
-
-#### 1. Mixture Model (TMM Paper Eq. 6)
-For each canonical phase bin $j$ and coordinate $c$, the perturbed observations $Y = \{y_\ell\}_{\ell=1}^{N}$ are modeled as a mixture of the LDP-perturbed target $\theta$ and systematic spatial noise:
-
-$$p(y_\ell \mid \theta, \pi) = \pi f_{\text{SW}}(y_\ell \mid \theta) + (1 - \pi) u(y_\ell)$$
-
-where $u(y_\ell)$ represents a uniform distribution over the extended support $[-b, 1+b]$, and $f_{\text{SW}}(y \mid x)$ is the piecewise constant probability density of the Square Wave mechanism.
-
-#### 2. EM Iterative Inversion
-During the **E-Step**, we evaluate the posterior probability $\gamma_\ell$ that the observation $y_\ell$ belongs to the inlier candidate:
-
-$$\gamma_\ell = \frac{\pi f_{\text{SW}}(y_\ell \mid \theta)}{\pi f_{\text{SW}}(y_\ell \mid \theta) + (1 - \pi) u(y_\ell)}$$
-
-During the **M-Step**, the prior probability is updated by $\pi \leftarrow \frac{1}{N}\sum \gamma_\ell$, and the latent profile coordinate $\theta$ is optimized via a dense grid search maximizing the posterior-weighted log-likelihood.
-
-#### 3. Continuous KDE Mode Synthesis (TMM Paper Eq. 7 & 8)
-To mitigate discretization boundaries, the EM estimate is refined using a posterior-weighted continuous Gaussian Kernel Density Estimator:
-
-$$\hat{p}(x) = \frac{1}{Z \cdot h} \sum_{\ell=1}^N \gamma_\ell K\left(\frac{x - y_\ell}{h}\right)$$
-
-The bandwidth $h$ is automatically optimized using our posterior-weighted Silverman's rule based on the posterior effective sample size $N_{\text{eff}}$:
-
-$$h = 0.9 \min\left(\hat{\sigma}_\gamma, \frac{\text{IQR}_\gamma}{1.34}\right) N_{\text{eff}}^{-1/5}, \quad N_{\text{eff}} = \frac{(\sum \gamma_\ell)^2}{\sum \gamma_\ell^2}$$
-
----
-
 ### 🚀 Getting Started
 
 #### System Setup
